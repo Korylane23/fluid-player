@@ -3485,13 +3485,14 @@ var fluidPlayerClass = {
         var videoPlayerTag = this;
         var player = fluidPlayerClass.getInstanceById(this.id);
 
-        if (player.mainVideoDuration == 0 && !player.isCurrentlyPlayingAd) {
+        if (player.mainVideoDuration == 0 && !player.isCurrentlyPlayingAd && player.mainVideoReadyState === false) {
             player.mainVideoDuration = videoPlayerTag.duration;
+            player.mainVideoReadyState = true;
             var event = new CustomEvent("mainVideoDurationSet");
             videoPlayerTag.dispatchEvent(event);
+            videoPlayerTag.removeEventListener('loadedmetadata', player.mainVideoReady);
         }
 
-        videoPlayerTag.removeEventListener('loadedmetadata', player.mainVideoReady);
     },
 
     userActivityChecker: function () {
@@ -3915,6 +3916,7 @@ var fluidPlayerClass = {
         player.dashScriptLoaded        = false;
         player.hlsScriptLoaded         = false;
         player.isPlayingMedia          = false;
+        player.mainVideoReadyState     = false;
 
         //Default options
         player.displayOptions = {
